@@ -36,7 +36,8 @@ class Text2SpeechApiWrapper:
         'text': text
       },
       'voice':{
-        'languageCode': 'en-gb',
+        # 400: Invalid argument for language code ro-RO....
+        'languageCode': 'en-US',
         'name': 'en-GB-Standard-A',
         'ssmlGender': 'FEMALE'
       },
