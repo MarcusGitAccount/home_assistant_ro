@@ -133,3 +133,5 @@ test2SpeechApiAuth.json
 modules/text2Speech/apiKey
 
 modules/text2Speech/text2SpeechApiAuth.json
+
+.vscode/settings.json
