@@ -135,3 +135,4 @@ modules/text2Speech/apiKey
 modules/text2Speech/text2SpeechApiAuth.json
 
 .vscode/settings.json
+modules/calendar/credentials.json
