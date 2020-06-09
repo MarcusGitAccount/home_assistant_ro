@@ -1,0 +1,162 @@
+{
+	"info": {
+		"_postman_id": "373b6df1-de7c-49bd-a9a5-002109a4675d",
+		"name": "home assistant",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "texttospeech call",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=utf-8",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"input\":{\r\n\t\t\"text\":\"I\\\"ve added the event to your calendar.\"\r\n\t},\r\n\t\"voice\":{\r\n\t\t\"languageCode\":\"en-gb\",\r\n\t\t\"name\":\"en-GB-Standard-A\",\r\n\t\t\"ssmlGender\":\"FEMALE\"\r\n\t},\r\n\t\"audioConfig\":{\r\n\t\t\"audioEncoding\":\"MP3\"\r\n\t}\r\n}"
+				},
+				"url": {
+					"raw": "https://texttospeech.googleapis.com/v1/text:synthesize?key=AIzaSyDoLPGkqwhBEAyceyIS5XPVahFm4Gq81-A",
+					"protocol": "https",
+					"host": [
+						"texttospeech",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"v1",
+						"text:synthesize"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "AIzaSyDoLPGkqwhBEAyceyIS5XPVahFm4Gq81-A"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all events between",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://www.googleapis.com/calendar/v3/calendars/7p6iutdbluv6bqbssbulkv0hug%40group.calendar.google.com/events?key=AIzaSyDoLPGkqwhBEAyceyIS5XPVahFm4Gq81-A&timeMin=2020-06-09T10:00:00%2b03:00&timeMax=2020-06-09T12:00:00%2b03:00",
+					"protocol": "https",
+					"host": [
+						"www",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"calendar",
+						"v3",
+						"calendars",
+						"7p6iutdbluv6bqbssbulkv0hug%40group.calendar.google.com",
+						"events"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "AIzaSyDoLPGkqwhBEAyceyIS5XPVahFm4Gq81-A"
+						},
+						{
+							"key": "timeMin",
+							"value": "2020-06-09T10:00:00+03:00",
+							"disabled": true
+						},
+						{
+							"key": "timeMax",
+							"value": "2020-06-09T12:00:00+03:00",
+							"disabled": true
+						},
+						{
+							"key": "timeMax",
+							"value": "2020-06-09T12%3A00%3A00%2B03%3A00",
+							"disabled": true
+						},
+						{
+							"key": "timeMin",
+							"value": "2020-06-09T10%3A00%3A00%2B03%3A00",
+							"disabled": true
+						},
+						{
+							"key": "timeMin",
+							"value": "2020-06-09T10:00:00%2b03:00"
+						},
+						{
+							"key": "timeMax",
+							"value": "2020-06-09T12:00:00%2b03:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Insert event",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "283a57adbb543e69c8801281884ec4022f93ac21",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"summary\": \"Postman\",\n    \"end\": {\n      \"dateTime\": \"2020-06-09T21:00:00+03:00\"\n    },\n    \"start\": {\n      \"dateTime\": \"2020-06-09T22:00:00+03:00\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://www.googleapis.com/calendar/v3/calendars/7p6iutdbluv6bqbssbulkv0hug%40group.calendar.google.com/events?key=AIzaSyDoLPGkqwhBEAyceyIS5XPVahFm4Gq81-A",
+					"protocol": "https",
+					"host": [
+						"www",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"calendar",
+						"v3",
+						"calendars",
+						"7p6iutdbluv6bqbssbulkv0hug%40group.calendar.google.com",
+						"events"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "AIzaSyDoLPGkqwhBEAyceyIS5XPVahFm4Gq81-A"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
