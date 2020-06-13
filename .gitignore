@@ -136,3 +136,6 @@ modules/text2Speech/text2SpeechApiAuth.json
 
 .vscode/settings.json
 modules/calendar/credentials.json
+modules/calendar/home-assistant-276520-f69f1f1e038e.json
+modules/calendar/service-account.json
+modules/calendar/token.pickle
