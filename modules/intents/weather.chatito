@@ -58,9 +58,9 @@
 @[timp]
     mâine
     azi
-    săptămâna viitoare
-    în weekend
-    sâmbătă
+    săptămâna viitoare % forecast doar pe 5 zile Mesaj='Forecast peste 5 zile'
+    în weekend         % vinerea din săptămâna curentă
+    sâmbătă            % azi e duminică => sămbăta viitoare Mesaj='Forecast sâmbata viitoare'
     luni
     duminică
     marți
@@ -69,12 +69,13 @@
     vineri
     peste o oră
     peste două ore
-    după-masă
+    după-masă       % azi e seară => după masă mâine
     peste o săptămână
-    peste două săptămâni
+    peste două săptămâni % neimportant
     peste două zile
     după masă
     seara
     la noapte
     mâine dimineață   
-    mâine după masă 
+    mâine după masă
+    dimineața => 10.00 azi default, dar dacă ora > 10.00 => 10.00 mâine

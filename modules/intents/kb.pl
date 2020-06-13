@@ -6,7 +6,7 @@
 
 intent(queryWeather).
 
-% relative(queryWeather, timp, dimineata, R).     % ora 10 default 
+relative(queryWeather, timp, 'dimineata', R, Mesaj).     % ora 10 default 
 % relative(queryWeather, timp, "dupa amiaza", R). % ora 14 default 
 
 % entity(queryWeather, timp, 1593006198).

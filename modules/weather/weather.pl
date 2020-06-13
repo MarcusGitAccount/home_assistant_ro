@@ -2,7 +2,7 @@
 :- use_module(library(http/http_open)).
 
 api_key("042cfb53b0542daeac4dcffb8bc01246").
-api_weather_call_url(URL, City) :- api_key(API_Key), format(string(URL), 'http://api.openweathermap.org/data/2.5/weather?q=~s&appid=~s&units=metric&lang=ro', [City, API_Key]).
+api_weather_call_url(URL, City) :- api_key(API_Key), format(string(URL), 'http://127.0.0.1:5001/api/weather?location=~s', [City]).
 api_forecast_call_url(URL, City) :- api_key(API_Key), format(string(URL), 'http://api.openweathermap.org/data/2.5/forecast?q=~s&appid=~s&units=metric&lang=ro', [City, API_Key]).
 
 
@@ -41,15 +41,19 @@ extract_info(Data, Desc, Temp, FeelsLike, Humidity) :-
 
 %! weather_now(-City) is det.
 %  print out information about current weather in given city
-weather_now(City) :-
+weather_now(City, R) :-
     get_weather_data(Data, City),
-    extract_info(Data, Desc, Temp, FeelsLike, Humidity),
-    format('Vremea acum in ~s: ~s. Temperatura este de ~2f C, dar se simte ca ~2f C.\nNivelul de umiditate este de ~d%.', [City, Desc, Temp, FeelsLike, Humidity]).
-
+    % extract_info(Data, Desc, Temp, FeelsLike, Humidity),
+    % format('Vremea acum in ~s: ~s. Temperatura este de ~2f C, dar se simte ca ~2f C.\nNivelul de umiditate este de ~d%.', [City, Desc, Temp, FeelsLike, Humidity]),
+    nth0(0, Data.get(weather), Weather),
+    Desc = Weather.get('description'),
+    R = [
+      desc(Desc)
+    ].
 
 %! weather_tomorrow(-City) is det.
 %  print out information about tomorrow's weather (24h from now) in given city 
 weather_tomorrow(City) :-
     get_forecast_data(Data, City, 8),
     extract_info(Data, Desc, Temp, FeelsLike, Humidity),
-    format('Vremea peste 24h in ~s: ~a. Temperatura va fi de ~2f C, dar se va simti ca ~2f C.\nNivelul de umiditate va fi de ~d%.', [City, Desc, Temp, FeelsLike, Humidity]).
+    format('Vream ~s in ~s: ~a. Temperatura va fi de ~2f C, dar se va simti ca ~2f C.\nNivelul de umiditate va fi de ~d%.', [City, Desc, Temp, FeelsLike, Humidity]).
