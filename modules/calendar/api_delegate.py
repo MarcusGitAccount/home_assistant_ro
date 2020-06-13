@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import datetime
 import pickle
-import os.path
+import os.path as path
 import json
 import requests as req
 
@@ -14,7 +14,7 @@ from google.auth.transport.requests import Request
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 
-
+from datetime import datetime
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = [
@@ -24,9 +24,11 @@ SCOPES = [
 CALENDAR_ID = '7p6iutdbluv6bqbssbulkv0hug@group.calendar.google.com'
 CREDENTIALS_FILENAME = 'service-account.json'
 
-WEATHER_KEY = '042cfb53b0542daeac4dcffb8bc01246'
-
 service = None
+
+WEATHER_KEY = '042cfb53b0542daeac4dcffb8bc01246'
+DIRNAME = path.dirname(__file__)
+WEATHER_CACHE =  path.join(DIRNAME, '.cache')
 
 def get_credentials():
   global service
@@ -35,7 +37,7 @@ def get_credentials():
   # The file token.pickle stores the user's access and refresh tokens, and is
   # created automatically when the authorization flow completes for the first
   # time.
-  if os.path.exists('token.pickle'):
+  if path.exists('token.pickle'):
     with open('token.pickle', 'rb') as token:
       creds = pickle.load(token)
   # If there are no (valid) credentials available, let the user log in.
@@ -139,16 +141,51 @@ def calendar_api_update():
 @app.route('/api/weather', methods=['GET'])
 def weather_api():
   if request.method == 'GET':
-    location = request.args.get('location', type=str)
-    data = get_weather(location)
+    lat = request.args.get('lat', type=float, default=46.770439)
+    lon = request.args.get('lon', type=float, default=23.591423)
+    data = get_weather(lat, lon)
     return json.dumps(data, indent=2, ensure_ascii=False)
 
-def get_weather(location):
-  url = f'http://api.openweathermap.org/data/2.5/weather?q={location}&appid={WEATHER_KEY}&units=metric&lang=ro'
+def get_weather(lat, lon):
+  cache = {}
+  key = str((lat, lon))
+  with open(WEATHER_CACHE, 'rb') as fd:
+    content = fd.read()
+    if content:
+      cache = json.loads(content, encoding='utf-8')
+      if key in cache:
+        print('Found cached data')
+        keys = list(cache[key])
+        if len(keys) != 1:
+          print('Invalid cache data')
+        else:
+          timestamp = keys[0]
+
+          now = datetime.utcnow()
+          then = datetime.fromtimestamp(int(timestamp))
+          diff = now - then
+          total = diff.total_seconds()
+          minutes = total / 60
+          if minutes > 60:
+            print('Cached data too old')
+          else:
+            return cache[key]
+
+  print('Issuing request to weather api.')
+  url = f'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=minutely&appid={WEATHER_KEY}&lang=ro&units=metric'
   response = req.get(url)
   utf_content = response.content.decode('utf-8')
-  data = json.loads(utf_content, encoding='utf-16')
-  print('Weather data', data)
+  data = json.loads(utf_content, encoding='utf-8')
+  
+  with open(WEATHER_CACHE, 'wb') as fd:
+    timestamp = datetime.utcnow().timestamp()
+    cache[key] = {
+      f'{round(timestamp)}': data
+    }
+    print('Writing response to cache')
+    to_write = json.dumps(cache, ensure_ascii=False).encode('utf-8')
+    fd.write(to_write)
+
   return data
 
 def main():
