@@ -5,6 +5,7 @@ import datetime
 import pickle
 import os.path
 import json
+import requests as req
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -13,6 +14,8 @@ from google.auth.transport.requests import Request
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 
+
+
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = [
   'https://www.googleapis.com/auth/calendar.events',
@@ -20,6 +23,8 @@ SCOPES = [
 ]
 CALENDAR_ID = '7p6iutdbluv6bqbssbulkv0hug@group.calendar.google.com'
 CREDENTIALS_FILENAME = 'service-account.json'
+
+WEATHER_KEY = '042cfb53b0542daeac4dcffb8bc01246'
 
 service = None
 
@@ -131,6 +136,21 @@ def calendar_api_update():
 
   return json.dumps({'error': 'Method not supported'}), 400
 
+@app.route('/api/weather', methods=['GET'])
+def weather_api():
+  if request.method == 'GET':
+    location = request.args.get('location', type=str)
+    data = get_weather(location)
+    return json.dumps(data, indent=2, ensure_ascii=False)
+
+def get_weather(location):
+  url = f'http://api.openweathermap.org/data/2.5/weather?q={location}&appid={WEATHER_KEY}&units=metric&lang=ro'
+  response = req.get(url)
+  utf_content = response.content.decode('utf-8')
+  data = json.loads(utf_content, encoding='utf-16')
+  print('Weather data', data)
+  return data
+
 def main():
   global service
 
@@ -146,6 +166,8 @@ def main():
   # print(json.dumps(updated, indent=2))
   
   app.run(port=5001, host='127.0.0.1', debug=True)
+
+  # get_weather('Cluj-Napoca')
 
 if __name__ == '__main__':
   main()
