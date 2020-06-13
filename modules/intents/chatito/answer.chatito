@@ -1,0 +1,29 @@
+
+%[answer]('training': '90', 'testing': '30')
+  ~[greet] @[positive]
+  ~[greet] @[negative]
+
+~[greet]
+  Pepper,
+  Salut,
+
+@[positive]
+  Da
+  Da, este ok
+  Sigur
+  Desigur
+  Așa facem
+  Bine
+  Continuă tot așa
+  Continuă
+  Okay
+  Ok
+  Îmi place
+
+@[negative]
+  Nu
+  Nu așa
+  Nu este ok
+  Deloc
+  Nu sunt de acord
+  Nu îmi place
