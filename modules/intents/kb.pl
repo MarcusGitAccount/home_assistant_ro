@@ -1,12 +1,17 @@
+:- use_module(library(date_time)).
 
 :- dynamic intent/1.
-:- dynamic relative/4.
+:- dynamic relative/5.
 :- dynamic entity/3.
 :- dynamic default/3.
 
 intent(queryWeather).
 
-relative(queryWeather, timp, 'dimineata', R, Mesaj).     % ora 10 default 
+:- consult('weather_kb.pl').
+
+% Get dates and weekday names for today and the next 6 days
+:- update_weekday_dates(_).
+
 % relative(queryWeather, timp, "dupa amiaza", R). % ora 14 default 
 
 % entity(queryWeather, timp, 1593006198).
