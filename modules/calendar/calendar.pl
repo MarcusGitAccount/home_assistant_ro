@@ -2,9 +2,10 @@
 :- use_module(library(http/http_open)).
 :- use_module(library(date_time)).
 :- use_module(library(url)).
+:- use_module(library(http/http_server)).
 
+calendarApiUrl('http://127.0.0.1:5001/api/calendar/').
 calendarId('7p6iutdbluv6bqbssbulkv0hug@group.calendar.google.com').
-calendarApiKey('AIzaSyDoLPGkqwhBEAyceyIS5XPVahFm4Gq81-A').
 
 % Returns the string representation of the sign of a number.
 strSign(Nbr, "-") :- number(Nbr), Nbr < 0, !.
@@ -52,9 +53,8 @@ rfc339Timestamp(Date, Timestamp) :-
   format(string(Timestamp), '~d-~s-~sT~s:~s:~s~s', [Year, M, D, H, Min, S, O]).
 
 listEventsURL(TimeMin, TimeMax, Url) :-
-  calendarId(Id),
-  calendarApiKey(Key),
-  format(string(Decoded), 'https://www.googleapis.com/calendar/v3/calendars/~s/events?key=~s&timeMin=~s&timeMax=~s', [Id, Key, TimeMin, TimeMax]),
+  calendarApiUrl(ApiUrl),
+  format(string(Decoded), '~s?start=~s&end=~s', [ApiUrl, TimeMin, TimeMax]),
   url_iri(Url, Decoded). % encode url
 
 % Just for display purposes. Transforms json to list of predicated representation.
@@ -75,23 +75,15 @@ listEventsCall(TimeMin, TimeMax, R) :-
   L = EventsData.get('items'),
   maplist(jsonToList, L, R).
 
-insertEventURL(Url) :-
-  calendarId(Id),
-  calendarApiKey(Key),
-  format(string(Decoded), 'https://www.googleapis.com/calendar/v3/calendars/~s/events?key=~s', [Id, Key]),
-  url_iri(Url, Decoded). % encode url
-
-insertEventCall(Title, Start, End, R) :-
-  Body = json{
-    summary: Title,
-    end: json{
-      dateTime: End
-    },
-    start: json{
-      dateTime: Start
-    }
-  },
-  insertEventURL(Url),
+insertEventCall(Title, Location, Start, End, R) :-
+  Body = json([
+    summary = Title,
+    location = Location,
+    end = End,
+    start = Start
+  ]),
+  calendarApiUrl(Url),
+  write(json(Body)),
   setup_call_cleanup(
       http_open(
           Url, 
@@ -100,10 +92,39 @@ insertEventCall(Title, Start, End, R) :-
           post(json(Body)),
           status_code(Code),
           request_header('Content-Type'='application/json'),
-          request_header('Accept'='application/json'),
+          request_header('Accept'='application/json')
         ]
       ),
       json_read_dict(In, InsertData),
       close(In)
   ),
-  write(Code).
+  write(Code),
+  jsonToList(InsertData, R).
+
+updateEventURL(EventId, Url) :-
+  calendarApiUrl(ApiUrl),
+  format(string(Decoded), '~s~s/?id=~s', [ApiUrl, 'update', EventId]),
+  url_iri(Url, Decoded). % encode url
+
+% ToBeChanged: list of [key = new_value]. !! spaces are needed
+updateEventCall(EventId, ToBeChanged, R) :-
+  Body = json(ToBeChanged),
+  updateEventURL(EventId, Url),
+  write(json(Body)),
+  write(Url),
+  setup_call_cleanup(
+      http_open(
+          Url, 
+          In, 
+        [
+          post(json(Body)),
+          status_code(Code),
+          request_header('Content-Type'='application/json'),
+          request_header('Accept'='application/json')
+        ]
+      ),
+      json_read_dict(In, UpdateData),
+      close(In)
+  ),
+  write(Code),
+  jsonToList(UpdateData, R).
