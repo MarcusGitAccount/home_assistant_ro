@@ -15,6 +15,8 @@ intent(queryWeather).
 default(queryWeather, loc, "Cluj-Napoca").
 default(queryWeather, timp, Current) :- get_time(Current). % unix time timestamp as float number [measures seconds]
 
+% transform(queryWeather, timp, azi, Time) :- 
+
 % used for mapping purposes
 getEntity(value(E, _), E).
 
@@ -22,7 +24,7 @@ doIntent(Intent, R) :-
   intent(Intent),
   % transform relative entities(weekend date, noon/evening/morning time limits)
 
-  % subistute with default where possible
+  % suisute with default where possible
   findall(value(E, V), entity(Intent, E, V), Existing),
   maplist(getEntity, Existing, Entities),
   findall(value(E, V), (default(Intent, E, V), not(member(E, Entities))), Defaults),
