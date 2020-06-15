@@ -1,0 +1,44 @@
+
+%[calendarUpdate]('training': '90', 'testing': '30')
+    ~[greet?] ~[change] @[event]
+    ~[greet?] ~[change] @[data]
+    ~[greet?] ~[change] @[ora]
+
+~[greet]
+    Pepper,
+    Salut,
+
+~[change]
+    modifică în
+    schimbă în
+    vreau să fie
+    doresc să fie
+    vreau să se numească
+    prefer să fie în
+
+@[event]
+    programare la stomatolog
+    ședință cu echipa
+    prânz cu Maria
+
+@[data]
+    mâine
+    azi
+    săptămâna viitoare
+    sâmbătă
+    luni
+    duminică
+    marți
+    miercuri
+    joi
+    vineri 
+    11 septembrie
+    <orice data calendaristica>
+
+@[ora]
+    12
+    doisprezece 
+    unu
+    1
+    13
+    <orice oră>

@@ -17,6 +17,8 @@ intent(queryWeather).
 % entity(queryWeather, timp, 1593006198).
 % entity(queryWeather, loc, "Oradea").
 
+finalEntity(queryWeather, timp, )
+
 default(queryWeather, loc, "Cluj-Napoca").
 default(queryWeather, timp, Current) :- get_time(Current). % unix time timestamp as float number [measures seconds]
 
@@ -39,3 +41,12 @@ doIntent(Intent, R) :-
   % if so, ask further questions
 
   % update state if required(not for this intent yet)
+
+entity(queryWeather, timp, 'dimineata').
+relative(queryWeather, timp, 'dimineata', R, Mesaj) => finalEntity(queryWeather, timp, R, Mesaj)
+
+
+entity(queryWeather, timp, X) :- false => finalEntity(queryWeather, timp, Default, Mesaj)
+
+% if missing, not needed for weather
+entity(calendarAdd, ora_inceput, X) :- false => missingEntity()

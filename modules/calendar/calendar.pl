@@ -4,6 +4,20 @@
 :- use_module(library(url)).
 :- use_module(library(http/http_server)).
 
+% :- module(calendar, [
+%     calendarApiUrl/1,
+%     calendarId/1,
+%     strSign/2,
+%     utcOffsetToString/2,
+%     rfc339Timestamp/2,
+%     jsonToList/2,
+%     listEventsURL/3,
+%     listEventsCall/2,
+%     insertEventCall/5,
+%     updateEventURL/2,
+%     updateEventCall/3
+%   ]).
+
 calendarApiUrl('http://127.0.0.1:5001/api/calendar/').
 calendarId('7p6iutdbluv6bqbssbulkv0hug@group.calendar.google.com').
 
