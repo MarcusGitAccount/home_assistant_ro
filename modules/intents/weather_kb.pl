@@ -1,42 +1,3 @@
-:- dynamic weekday_date/2.
-
-update_weekday_dates(_) :-
-    % Remove previously stored values
-    retractall(weekday_date(_, _)),
-
-    % Get the date for today
-    date_get(today, Today),
-    % Store the day of the week corresponding to today
-    week_day(Today, WD),
-    assertz(weekday_date(WD, Today)),
-
-    % Get the date for following days
-    % and store their corresponding days of the week
-    date_add(Today, [1 days], NewDate_1),
-    week_day(NewDate_1, WD_1),
-    assertz(weekday_date(WD_1, NewDate_1)),
-
-    date_add(Today, [2 days], NewDate_2),
-    week_day(NewDate_2, WD_2),
-    assertz(weekday_date(WD_2, NewDate_2)),
-
-    date_add(Today, [3 days], NewDate_3),
-    week_day(NewDate_3, WD_3),
-    assertz(weekday_date(WD_3, NewDate_3)),
-
-    date_add(Today, [4 days], NewDate_4),
-    week_day(NewDate_4, WD_4),
-    assertz(weekday_date(WD_4, NewDate_4)),
-
-    date_add(Today, [5 days], NewDate_5),
-    week_day(NewDate_5, WD_5),
-    assertz(weekday_date(WD_5, NewDate_5)),
-
-    date_add(Today, [6 days], NewDate_6),
-    week_day(NewDate_6, WD_6),
-    assertz(weekday_date(WD_6, NewDate_6)).
-
-
 relative(queryWeather, timp, 'dimineata', R, Mesaj) :-
     % Get hour component from current time
     time_get(now, time(H, _, _)),  
@@ -180,3 +141,19 @@ relative(queryWeather, timp, 'duminica', R, Mesaj) :-
     date_interval(D2, D1, D days),
     R = ['daily', D, 'day'],
     Mesaj = 'duminic\u0103'.
+
+
+
+relative(queryWeather, loc, 'in Cluj-Napoca', R, Mesaj) :-
+    R = ['46.770439', '23.591423'],
+    Mesaj = '\u00een Cluj-Napoca'.
+
+relative(queryWeather, loc, 'in Floresti', R, Mesaj) :-
+    R = ['46.744022', '23.482088'],
+    Mesaj = '\u00een Flore\u0218ti'.
+relative(queryWeather, loc, 'in Bucuresti', R, Mesaj) :-
+    R = ['44.439663', '26.096306'],
+    Mesaj = '\u00een Bucure\u0218ti'.
+
+relative(queryWeather, loc, 'afara', R, Mesaj) :- relative(queryWeather, loc, 'in Cluj-Napoca', R, Mesaj).
+relative(queryWeather, loc, 'afara', R, Mesaj) :- relative(queryWeather, loc, 'in Cluj-Napoca', R, Mesaj).
