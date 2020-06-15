@@ -8,6 +8,7 @@
 :- use_module(library(date_time)).
 
 :- consult('../calendar/calendar.pl').
+:- consult('kb.pl').
 
 :- dynamic currentState/1.
 :- dynamic entity/3.
@@ -48,14 +49,17 @@ performState(idle) :-
   !.
 % intent is not a task
 performState(idle) :-
-  currentState(idle),
-  switchState(idle).
+  currentState(idle).
 
 % Store data for event to be created during this state. (mockup event for now)
 performState(calendarAdd) :- 
   currentState(calendarAdd),
   % call intent setup function to get final and missing entities
+  Entities = [event, data, ora_inceput, ora_final],
+  getEntitiesValues(calendarAdd, Entities, false),
   switchState(sendBack).
+
+performState(nil).
 
 % Will reach goal if at least one entity is missing
 performState(sendBack) :- 
@@ -77,11 +81,11 @@ performState(sendBack) :-
   currentState(sendBack),
 
   finalEntity(calendarAdd, event, _, M1),
-  finalEntity(calendarAdd, event, _, M2),
-  finalEntity(calendarAdd, event, _, M3),
-  finalEntity(calendarAdd, event, _, M4),
+  finalEntity(calendarAdd, data, _, M2),
+  finalEntity(calendarAdd, ora_inceput, _, M3),
+  finalEntity(calendarAdd, ora_final, _, M4),
 
-  format(string(Message), 'Evenimentul se numește ~s. Data evenimentului este ~s. Ora de început ~s, iar ora de final ~s. Ești de acord cu adăugarea acestuia?', [M1, M2, M3, M4]),
+  format(string(Message), 'Evenimentul se nume\u0219te ~s. Data evenimentului este ~s. Ora de \u00eenceput ~s, iar ora de final ~s. E\u0219ti de acord cu ad\u0103ugarea acestuia?', [M1, M2, M3, M4]),
   Final =..[message, Message],
   
   retractall(message(_)),
@@ -103,7 +107,7 @@ performState(waitForAnswer) :-
 performState(calendarEventDecider) :- 
   currentState(calendarEventDecider),
   positiveAnswer(),
-  Message =..[message, 'Evenimentul va fi adăugat.'],
+  Message =..[message, 'Evenimentul va fi ad\u0103ugat.'],
   assertz(Message),
   switchState(calendarEventInsert).
 
@@ -115,18 +119,26 @@ performState(calendarEventInsert) :-
 performState(calendarEventDecider) :- 
   currentState(calendarEventDecider),
   negativeAnswer(),
-  Message =..[message, 'Evenimentul nu va fi adăugat.'],
+  Message =..[message, 'Evenimentul nu va fi ad\u0103ugat.'],
   assertz(Message),
   switchState(respond).
 
 performState(respond) :-
   currentState(respond),
   retract(message(Message)),
+  
+  % cleanup
+  retractall(intent(_)),
+  retractall(entity(_, _, _)),
+  retractall(finalEntity(_, _, _, _)),
+  retractall(toBeModified(_, _)),
+  retractall(missingEntity(_, _)),
+
   talkBack(Message),
   switchState(idle).
 
 performState(askForUpdate) :-
-  currentState(askForApproval),
+  currentState(askForUpdate),
   retract(message(Message)),
   talkBack(Message),
   switchState(waitForUpdate).
@@ -137,45 +149,111 @@ performState(waitForUpdate) :-
   switchState(calendarUpdate).
 
 performState(calendarUpdate) :-
-  retract(toBeModified(calendarAdd, Entity)),
-  retract(finalEntity(calendarAdd, Entity, _, Message)),
+  % retract(toBeModified(calendarAdd, Entity)),
+  % retract(finalEntity(calendarAdd, Entity, _, Message)),
 
-  newFinal =..[finalEntity(finalEntity, calendarAdd, Entity, _, Message)],
-  assertz(newFinal),
+  % newFinal =..[finalEntity(finalEntity, calendarAdd, Entity, _, Message)],
+  % assertz(newFinal),
+  currentState(calendarUpdate),
 
-  currentState(calendarEventUpdate),
+  Entities = [event, data, ora],
+  getEntitiesValues(calendarUpdate, Entities, false),
+
+  update(),
   log('Modified event'),
+  retractall(intent(_)),
   switchState(sendBack).
+
+update() :- 
+  toBeModified(calendarAdd, ora_inceput), 
+  entity(calendarUpdate, ora, _),
+
+  retract(missingEntity(calendarAdd, ora_inceput)),
+  retract(toBeModified(calendarAdd, ora_inceput)),
+  retract(entity(calendarUpdate, ora, _)),
+  retract(finalEntity(calendarUpdate, ora, R, M)),
+
+  assertz(finalEntity(calendarAdd, ora_inceput, R, M)),
+  log('Update ora_start'), !.
+
+update() :- 
+  toBeModified(calendarAdd, ora_final), 
+  entity(calendarUpdate, ora, _),
+
+  retract(missingEntity(calendarAdd, ora_final)),
+  retract(toBeModified(calendarAdd, ora_final)),
+  retract(entity(calendarUpdate, ora, _)),
+  retract(finalEntity(calendarUpdate, ora, R, M)),
+
+  assertz(finalEntity(calendarAdd, ora_final, R, M)),
+  log('Update ora_final'), !.
+
+update() :- 
+  toBeModified(calendarAdd, data), 
+  entity(calendarUpdate, data, _),
+
+  retract(missingEntity(calendarAdd, data)),
+  retract(toBeModified(calendarAdd, data)),
+  retract(finalEntity(calendarUpdate, data, R, M)),
+  retract(entity(calendarUpdate, data, _)),
+
+  assertz(finalEntity(calendarAdd, data, R, M)),
+  log('Update data'), !.
+
+update() :- 
+  toBeModified(calendarAdd, event), 
+  entity(calendarUpdate, event, _),
+
+  retract(missingEntity(calendarAdd, event)),
+  retract(toBeModified(calendarAdd, event)),
+  retract(finalEntity(calendarUpdate, event, R, M)),
+  retract(entity(calendarUpdate, event, _)),
+
+  assertz(finalEntity(calendarAdd, event, R, M)),
+  log('Update event'), !.
+
+update() :-
+  log('Could not update anything').
 
 % Will fail if all entities are filled.
 hasMissingEntity() :- 
   missingEntity(calendarAdd, event),       
-  Message =..[message, 'Cum vrei să se numească evenimentul?'], assertz(Message), 
+  Message =..[message, 'Cum vrei s\u0103 se numeasc\u0103 evenimentul?'], assertz(Message), 
   Modified =..[toBeModified, calendarAdd, event], assertz(Modified).
 hasMissingEntity() :- 
   missingEntity(calendarAdd, data),        
-  Message =..[message, 'În ce dată dorești să fie evenimentul?'], assertz(Message), 
+  Message =..[message, '\u00een ce dat\u0103 dore\u0219ti s\u0103 fie evenimentul?'], assertz(Message), 
   Modified =..[toBeModified, calendarAdd, data], assertz(Modified).
 hasMissingEntity() :- 
   missingEntity(calendarAdd, ora_inceput), 
-  Message =..[message, 'Care dorești să fie ora de început a evenimentului?'], assertz(Message), 
+  Message =..[message, 'Care dore\u0219ti s\u0103 fie ora de \u00eenceput a evenimentului?'], assertz(Message), 
   Modified =..[toBeModified, calendarAdd, ora_inceput],  assertz(Modified).
 hasMissingEntity() :- 
   missingEntity(calendarAdd, ora_final),   
-  Message =..[message, 'Care dorești să fie ora de final a evenimentului?'], assertz(Message), 
+  Message =..[message, 'Care dore\u0219ti s\u0103 fie ora de final a evenimentului?'], assertz(Message), 
   Modified =..[toBeModified, calendarAdd, ora_final], assertz(Modified).
 
 startEndTimeForAddAreCorrect() :-
-  finalEntity(calendarAdd, ora_inceput, Start, _),
-  finalEntity(calendarAdd, ora_final, End, _),
+  finalEntity(calendarAdd, ora_inceput, StartL, _),
+  finalEntity(calendarAdd, ora_final, EndL, _),
+
+  nth0(0, StartL, Start),
+  nth0(0, EndL, End),
+
   not(time_compare(Start, <, End)),
   % Set message
-  Message =..[message, 'Orele de început și de final nu sunt date corect. Care dorești să fie ora de început a evenimentului?'],                
+  Message =..[message, 'Orele de \u00eenceput \u0219i de final nu sunt date corect. Care dore\u0219ti s\u0103 fie ora de \u00eenceput a evenimentului?'],                
   assertz(Message),
 
+  M1 =..[missingEntity, calendarAdd, ora_inceput], assertz(M1),
+  M2 =..[missingEntity, calendarAdd, ora_final], assertz(M2),
+
+  Modified =..[toBeModified, calendarAdd, ora_inceput],  
+  assertz(Modified),
+
   % Remove start/end hour so that the state will be reached once again
-  retractall(finalEntity(calendarAdd, ora_inceput, _)),
-  retractall(finalEntity(calendarAdd, ora_final, _)).
+  retractall(finalEntity(calendarAdd, ora_inceput, _, _)),
+  retractall(finalEntity(calendarAdd, ora_final, _, _)).
 
 % We don't want to fail.
 persistEntities([]) :- !.
@@ -185,7 +263,31 @@ persistEntities([Entity | T]) :-
   intent(Intent),
   Actual =..[entity, Intent, Name, Value],
   assertz(Actual),
+  % term_string(Actual, Str),
+  % log(Str),
   persistEntities(T).
+
+% For manual testing only.
+doAdd() :-
+  assertz(intent(calendarAdd)),
+  assertz(entity(calendarAdd, event, 'pr\u00e2nz cu Maria')), 
+  assertz(entity(calendarAdd, data, joi)), 
+  assertz(entity(calendarAdd, ora_inceput, '12')),
+  % assertz(entity(calendarAdd, ora_final, '13')),
+  intentReceived().
+  % entity(calendarAdd, ora_final, unu)
+
+% For manual testing only.
+doUpdate() :-
+  assertz(intent(calendarUpdate)),
+  assertz(entity(calendarUpdate, ora, '12')),
+  intentReceived().
+
+% For manual testing only.
+doAnswer() :-
+  assertz(intent(answer)),
+  assertz(entity(answer, positive, 'Da')),
+  intentReceived().
 
 intentEndpointHandler(Request) :-
   http_read_json(Request, Dict, [json_object(dict)]),
@@ -195,7 +297,8 @@ intentEndpointHandler(Request) :-
 
   % Remove old intent
   retractall(intent(_)),
-  % retractall(entity(_, _, _)),
+  retractall(entity(answer, _, _)),
+  retractall(entity(calendarUpdate, _, _)),
 
   New =..[intent, Intent],
   assertz(New),

@@ -127,6 +127,11 @@ relative(calendarAsk, ora_inceput_relativ, 'deseara', R, Mesaj) :-
 relative(calendarAsk, ora_inceput, '12', R, Mesaj) :- R = [time(12, 0, 0)], Mesaj = '12'.
 relative(calendarAsk, ora_inceput, 'doisprezece', R, Mesaj) :- R = [time(12, 0, 0)], Mesaj = '12'.
 relative(calendarAsk, ora_inceput, '13', R, Mesaj) :- R = [time(13, 0, 0)], Mesaj = '13'.
-relative(calendarAsk, ora_inceput, 'treisprezece', R, Mesaj) :- R = [time(12, 0, 0)], Mesaj = '12'.
+relative(calendarAsk, ora_inceput, 'treisprezece', R, Mesaj) :- R = [time(13, 0, 0)], Mesaj = '13'.
+relative(calendarAsk, ora_inceput, 'unu', R, Mesaj) :- R = [time(13, 0, 0)], Mesaj = '13'.
+relative(calendarAsk, ora_inceput, '1', R, Mesaj) :- R = [time(13, 0, 0)], Mesaj = '13'.
+
+
+relative(calendarAsk, ora_final, 'unu', R, Mesaj) :- R = [time(13, 0, 0)], Mesaj = '13'.
 
 relative(calendarAsk, ora_final, Ora, R, Mesaj) :- relative(calendarAsk, ora_inceput, Ora, R, Mesaj).

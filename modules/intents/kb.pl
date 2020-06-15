@@ -6,7 +6,7 @@
 :- dynamic finalEntity/4.
 :- dynamic missingEntity/2.
 
-intent(queryWeather).
+% intent(queryWeather).
 
 :- consult('weekdays_kb.pl').
 :- consult('calendar_kb.pl').
@@ -23,8 +23,8 @@ default(calendarAsk, ora_final, [time(23, 59, 59)], 'sfarsitul zilei').
 default(calendarAsk, data, R, M) :- relative(calendarAsk, data, 'azi', R, M).
 default(calendarAdd, Y, T, M) :- default(calendarAsk, Y, T, M).
 
-entity(calendarAdd, event, 'Nothing').
-entity(calendarAdd, ora_final, '12').
+% entity(calendarAdd, event, 'Nothing').
+% entity(calendarAdd, ora_final, '12').
 
 % to change parameter names
 relative(I, E, V) :-
@@ -87,11 +87,6 @@ doIntent(Intent, R) :-
 
   % update state if required(not for this intent yet)
 
-entity(queryWeather, timp, 'dimineata').
-relative(queryWeather, timp, 'dimineata', R, Mesaj) => finalEntity(queryWeather, timp, R, Mesaj)
-
-
-entity(queryWeather, timp, X) :- false => finalEntity(queryWeather, timp, Default, Mesaj)
-
-% if missing, not needed for weather
-entity(calendarAdd, ora_inceput, X) :- false => missingEntity()
+relative(calendarUpdate, event, Data, R, Mesaj) :- relative(calendarAsk, event, Data, R, Mesaj).
+relative(calendarUpdate, data, Data, R, Mesaj) :- relative(calendarAsk, data, Data, R, Mesaj).
+relative(calendarUpdate, ora, Data, R, Mesaj) :- relative(calendarAsk, ora_inceput, Data, R, Mesaj).
