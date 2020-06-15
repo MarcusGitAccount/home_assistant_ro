@@ -5,11 +5,14 @@
 
 weatherApiUrl('http://127.0.0.1:5001/api/weather').
 
+toNbr(N, R) :- number_string(R, N).
+
 getWeatherURL(LatLon, Time, Url) :-
     weatherApiUrl(ApiUrl),
     term_string(LatLon, LatLonString),
     term_string(Time, TimeString),
     format(string(Decoded), '~s?lat_lon=~s&time=~s', [ApiUrl, LatLonString, TimeString]),
+    format('~s~n', Decoded),
     url_iri(Url, Decoded).
 
 getWeatherCall(LatLon, Time, R) :-

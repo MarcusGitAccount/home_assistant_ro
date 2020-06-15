@@ -8,6 +8,7 @@
 :- use_module(library(date_time)).
 
 :- consult('../calendar/calendar.pl').
+:- consult('../weather/weather.pl').
 :- consult('kb.pl').
 
 :- dynamic currentState/1.
@@ -50,6 +51,84 @@ performState(idle) :-
 % intent is not a task
 performState(idle) :-
   currentState(idle).
+
+performState(queryWeather) :-
+  currentState(queryWeather),
+  Entities = [loc, timp],
+  getEntitiesValues(queryWeather, Entities, true),
+  switchState(weatherApiCall).
+
+performState(weatherApiCall) :-
+  currentState(weatherApiCall),
+
+  finalEntity(queryWeather, loc, LatLon, Location),
+  finalEntity(queryWeather, timp, Time, T),
+
+  % term_string(LatLon, L_),
+  % term_string(Time, T_),
+
+  log('Weather api call'),
+  getWeatherCall(LatLon, Time, Desc),
+  format(string(Message), 'Vremea ~s ~s. ~s.', [T, Location, Desc]),
+  assertz(message(Message)),
+  switchState(respond).
+
+performState(calendarAsk) :-
+  currentState(calendarAsk),
+  Entities = [data, ora_inceput_relativ, ora_inceput, ora_final],
+  getEntitiesValues(calendarAsk, Entities, true),
+  switchState(listEvents).
+
+performState(listEvents) :-
+  currentState(listEvents),
+
+  missingEntity(calendarAsk, ora_inceput_relativ),
+  finalEntity(calendarAsk, data, D, M2),
+  finalEntity(calendarAsk, ora_inceput, SL, M3),
+  finalEntity(calendarAsk, ora_final, EL, M4),
+
+  format(string(Message), 'Listare evenimente ~s \u00eentre ~s \u0219i ~s.', [M2, M3, M4]),
+  assertz(message(Message)),
+
+  log('Insert calendar API call'),
+
+  nth0(0, D, Date),
+  nth0(0, SL, S),
+  nth0(0, EL, E),
+
+  datetime_date_time(SDT, Date, S),
+  datetime_date_time(EDT, Date, E),
+
+  rfc339Timestamp(SDT, Start),
+  rfc339Timestamp(EDT, End),
+
+  listEventsCall(Start, End, _),
+  switchState(respond).
+
+performState(listEvents) :-
+  currentState(listEvents),
+
+  not(missingEntity(calendarAsk, ora_inceput_relativ)),
+  finalEntity(calendarAsk, data, D, M2),
+  finalEntity(calendarAsk, ora_inceput_relativ, OIR, M3),
+
+  format(string(Message), 'Listare evenimente ~s ~s.', [M2, M3]),
+  assertz(message(Message)),
+
+  log('Insert calendar API call'),
+
+  nth0(0, D, Date),
+  nth0(0, OIR, S),
+  nth0(1, OIR, E),
+
+  datetime_date_time(SDT, Date, S),
+  datetime_date_time(EDT, Date, E),
+
+  rfc339Timestamp(SDT, Start),
+  rfc339Timestamp(EDT, End),
+
+  listEventsCall(Start, End, _),
+  switchState(respond).
 
 % Store data for event to be created during this state. (mockup event for now)
 performState(calendarAdd) :- 
@@ -114,6 +193,25 @@ performState(calendarEventDecider) :-
 performState(calendarEventInsert) :-
   currentState(calendarEventInsert),
   log('Insert calendar API call'),
+
+  finalEntity(calendarAdd, event, Event, _),
+  finalEntity(calendarAdd, data, D, _),
+  finalEntity(calendarAdd, ora_inceput, SL, _),
+  finalEntity(calendarAdd, ora_final, EL, _),
+
+  nth0(0, D, Date),
+  nth0(0, SL, S),
+  nth0(0, EL, E),
+
+  datetime_date_time(SDT, Date, S),
+  datetime_date_time(EDT, Date, E),
+
+  rfc339Timestamp(SDT, Start),
+  rfc339Timestamp(EDT, End),
+
+  insertEventCall(Event, 'Cluj-Napoca', Start, End, _),
+  % log(Res),
+
   switchState(respond).
 
 performState(calendarEventDecider) :- 
@@ -273,7 +371,7 @@ doAdd() :-
   assertz(entity(calendarAdd, event, 'pr\u00e2nz cu Maria')), 
   assertz(entity(calendarAdd, data, joi)), 
   assertz(entity(calendarAdd, ora_inceput, '12')),
-  % assertz(entity(calendarAdd, ora_final, '13')),
+  assertz(entity(calendarAdd, ora_final, '13')),
   intentReceived().
   % entity(calendarAdd, ora_final, unu)
 
@@ -287,6 +385,18 @@ doUpdate() :-
 doAnswer() :-
   assertz(intent(answer)),
   assertz(entity(answer, positive, 'Da')),
+  intentReceived().
+
+doAsk() :-
+  assertz(intent(calendarAsk)),
+  assertz(entity(calendarAsk, data, 'joi')),
+  assertz(entity(calendarAsk, ora_inceput_relativ, 'dupa amiaza')),
+  intentReceived().
+
+doWeather() :-
+  assertz(intent(queryWeather)),
+  assertz(entity(queryWeather, timp, 'peste doua ore')),
+  assertz(entity(queryWeather, loc, 'in Floresti')),
   intentReceived().
 
 intentEndpointHandler(Request) :-

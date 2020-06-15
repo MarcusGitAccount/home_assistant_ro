@@ -49,6 +49,20 @@ getEntitiesValues(Intent, [Entity|Es], ReplaceMissing) :-
   !,
   relative(Intent, Entity, Value),
   getEntitiesValues(Intent, Es, ReplaceMissing).
+
+getEntitiesValues(calendarAsk, [Entity|Es], ReplaceMissing) :-
+  (
+    %if
+    ReplaceMissing
+    -> %then
+    default(Intent, Entity, R, Mesaj),
+    assertz(finalEntity(Intent, Entity, R, Mesaj))
+    ; %else
+    true
+  ),
+  assertz(missingEntity(Intent, Entity)),
+  getEntitiesValues(Intent, Es, ReplaceMissing).
+
 getEntitiesValues(Intent, [Entity|Es], ReplaceMissing) :-
   (
     %if

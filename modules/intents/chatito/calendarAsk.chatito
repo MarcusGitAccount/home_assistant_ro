@@ -1,7 +1,4 @@
 
-//===================== CALENDAR ==========================
-//INTREABA EVENT CALENDAR (data, ora inceput, <optional> ora final)
-
 %[intreabaCalendarEvent]('training': '90', 'testing': '30')
     ~[greet?] ~[te rogQ?] ~[intreabaEvent] @[data]?
     ~[greet?] ~[te rog] ~[intreabaEvent] @[data].
@@ -33,7 +30,7 @@
 
 ~[intreabaEvent]
     ce am planificat
-    ce apare in calendar pe
+    ce apare în calendar pe
     ce apare în calendar planificat pentru
     ce am în calendar pentru
     care sunt evenimentele
@@ -41,7 +38,7 @@
     ce este în calendar
     ce e în calendar
     este ceva planificat pentru
-    este liber calendarul  pentru
+    este liber calendarul pentru
 
 @[data]
     mâine
@@ -59,27 +56,24 @@
     peste două zile
     peste trei zile
     peste o săptămână
-    <zi calendar>
+    deseară
 
 @[ora_inceput_relativ]
     după-masă
     dimineață
     după prânz
     după amiaza
-    deseară
 
 @[ora_inceput]
     12
-    doisprezece 
+    doisprezece
     unu
     1
     13
-    <orice oră>
 
 @[ora_final]
     12
-    doisprezece 
+    doisprezece
     unu
     1
     13
-    <orice oră>

@@ -37,16 +37,12 @@ relative(calendarAsk, data, 'peste o saptamana', R, Mesaj) :-
 
 relative(calendarAsk, data, 'saptamana viitoare', R, Mesaj) :- relative(calendarAsk, data, 'peste o saptamana', R, Mesaj).
 
-
-
 relative(calendarAsk, data, 'in weekend', R, Mesaj) :-
     weekday_date('Friday', Friday),
     % Add 3 days to next Friday's date
     date_add(Friday, days(3), Sunday),
     R = [Friday, Sunday],
     Mesaj = '\u00een weekend'.
-
-
 
 relative(calendarAsk, data, 'luni', R, Mesaj) :-
     weekday_date('Monday', Monday),
@@ -83,25 +79,25 @@ relative(calendarAsk, data, 'duminica', R, Mesaj) :-
     R = [Sunday],
     Mesaj = 'duminic\u0103'.
 
-
-
-
-
 relative(calendarAsk, ora_inceput_relativ, 'dupa-masa', R, Mesaj) :-
     R = [time(12, 0, 0), time(18, 0, 0)],
-    Mesaj = ['dup\u0103-mas\u0103'].
+    Mesaj = 'dup\u0103-mas\u0103'.
+
+relative(calendarAsk, ora_inceput_relativ, 'dupa amiaza', R, Mesaj) :-
+    R = [time(12, 0, 0), time(18, 0, 0)],
+    Mesaj = 'dupa amiaza'.
 
 relative(calendarAsk, ora_inceput_relativ, 'dupa pranz', R, Mesaj) :-
     R = [time(12, 0, 0), time(14, 0, 0)],
-    Mesaj = ['dup\u0103 pr\u00e2nz'].
+    Mesaj = 'dup\u0103 pr\u00e2nz'.
 
 relative(calendarAsk, ora_inceput_relativ, 'dimineata', R, Mesaj) :-
     R = [time(7, 0, 0), time(12, 0, 0)],
-    Mesaj = ['diminea\u021ba'].
+    Mesaj = 'diminea\u021ba'.
 
 relative(calendarAsk, ora_inceput_relativ, 'deseara', R, Mesaj) :-
     R = [time(18, 0, 0), time(23, 0, 0)],
-    Mesaj = ['desear\u0103'].
+    Mesaj = 'desear\u0103'.
 
 relative(calendarAsk, ora_inceput, '12', R, Mesaj) :- R = [time(12, 0, 0)], Mesaj = '12'.
 relative(calendarAsk, ora_inceput, 'doisprezece', R, Mesaj) :- R = [time(12, 0, 0)], Mesaj = '12'.
@@ -109,7 +105,6 @@ relative(calendarAsk, ora_inceput, '13', R, Mesaj) :- R = [time(13, 0, 0)], Mesa
 relative(calendarAsk, ora_inceput, 'treisprezece', R, Mesaj) :- R = [time(13, 0, 0)], Mesaj = '13'.
 relative(calendarAsk, ora_inceput, 'unu', R, Mesaj) :- R = [time(13, 0, 0)], Mesaj = '13'.
 relative(calendarAsk, ora_inceput, '1', R, Mesaj) :- R = [time(13, 0, 0)], Mesaj = '13'.
-
 
 relative(calendarAsk, ora_final, 'unu', R, Mesaj) :- R = [time(13, 0, 0)], Mesaj = '13'.
 

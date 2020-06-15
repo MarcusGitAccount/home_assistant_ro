@@ -147,8 +147,8 @@ def weather_api():
     # Transform list represented as a string into real list
     lat_lon = lat_lon[1:-1:].split(',')
     time = time[1:-1:].split(',')  
-    lat = float(lat_lon[0])
-    lon = float(lat_lon[1])
+    lat = float(lat_lon[0][1:-1:])
+    lon = float(lat_lon[1][1:-1:])
 
     data = get_weather(lat, lon)
     response = {}

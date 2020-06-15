@@ -113,13 +113,16 @@
 			"response": []
 		},
 		{
-			"name": "Insert event",
+			"name": "Get events",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "283a57adbb543e69c8801281884ec4022f93ac21",
+						"value": "Bearer {\"type\":\"service_account\",\"project_id\":\"home-assistant-276520\",\"private_key_id\":\"f69f1f1e038e31aed5119050f60bc3f57b7c27c2\",\"private_key\":\"-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCfJBPrK1jgyxaY\\ntav9Go022ggpEgbnUvBn7azCmQ7LmUX8rJZXJpOYkBBKWuADIaGCsvoSLe0aMd2S\\nydhccxZaf8GAPLNxXhEOGkchT9oZW4ou2HA2x2OJ/TtxgN/s4mh9Dh4q/+fVaI1N\\nA0/h66/9aENN5J/XJcic3h+adzsQeCKUlW0gzC7IgHVqlRtBxWBIAzHzd9EmOQOn\\nLrE2d1xb5GCBf/Nr8EHU8c4zyXb5lWFBUeUPo1DYJeDjaEtMBSuJq3VnAMkMB7eb\\nNunoZ0W8A4UF0fB9HrD3jACjetZ5OnZXEK5nDPNImfB1RutHVXLQakDC9Zw3xCjX\\nLJa3WDTlAgMBAAECggEAIxOrbUYqaq/w7Nt8S4dG8Xxo2I6f5Wx3T10Im4Lriy5f\\nSgSLha2b0kCMyqrRnfcTd7C15HxpesDbfw+M6EG4v11R/A9FGRucBEEABSRp5PVz\\nlYRA5Z4Yv1FJASlgEgFMeSX7ucwaoEQRgxRUDu6pZaBN13UpUx2BpKvkCOK3atdL\\nAgaYT7Q6gH/ZHQ+Acl4JgbSMBuimb8Fg6iR3M6jgEG2+WxG4uOGRqwcGZgDUVYRm\\neO9mRbclm+x3qiC3f1MUZHew2h1qS/Ei9ZTzOlBNfQGW50LULZ+N8+VRagSHgqSy\\nrMk5ZN03mw1leloANJE4a9fSuLCgRcZMthP1r1RWcQKBgQDMFlyeXqAlzLf3U5oK\\nOIFw5T9yObxhA++Nf61c/qUYOj9DGkm519ybO5GemUwbEI60Obe5y0DbfpxpAZIn\\nWsM1ukbA5VpwebiNwDUSfiHdeey10jChyqi6rP+TP/LuGd8FJKnKOXi3dbi2GlVC\\nRpxp64zW/AkC4D9IHJddpeqmtQKBgQDHnuv41HFZ9MW2bOwFNqSf5wGD4Pl/xDis\\n+03Sjn1nhX/CsQlGyvhfBbde/wuSo4d4qxPU96Y+ex1TmDHHcznEzIH0RQAEUsAJ\\nh+16THCbvWJ9HZjxk8Z6AvJOXD5h+DO8EGrLvNsQonnvKRQuiZ0r4FQA+08ZWavH\\nMGV1DV6DcQKBgQCYr7Y1SegYv5N291YMhX/Z/bk89RMJpg8n1rjWFTFg8dr4kgdM\\ngcHrZWKpvFji+r04+uGIoBby4EOWj/VPeikH3kgm8rB566b2bjGGl1UwxJIi6ZE2\\nyk738ov3F2XhWvuudmKNB/hXkTxTCVp2DivhVrf083SucSUHB1T7XDE07QKBgBM3\\nfFXu9Z6ITsQ6BhqWYRC3p1CvxrUDCcW1R4+egfoGQv9WFaOIBJL5NObjPJT4QyFd\\nrsIQuSNIrNEQVLJzqDsGyPff8Jl58dy5BiaA11JWz/VldQTEihXS1MqwXJ0HzMss\\n9Wr5mkkmqwBX/wZf3w6LQOr7RmkVVdEOGqZDDDcxAoGAXCdh6lPT5uac+xngCCVq\\nc70lwFIqFJjThfUyJ2kOdGhXheQfqSKUSYahPcUNukJWyB38ts28nEquDyT7A/iv\\nDvHRHPlXuT6I2FA0t5hSMRQnWHuWIYWOzxV48V8PMIfjKNG8GRR3Ybt6Csan0VIO\\nsiOMJQPmb9chLJyp2zRYIoQ=\\n-----END PRIVATE KEY-----\\n\",\"client_email\":\"calendar-account@home-assistant-276520.iam.gserviceaccount.com\",\"client_id\":\"106674262558973659448\",\"auth_uri\":\"https://accounts.google.com/o/oauth2/auth\",\"token_uri\":\"https://oauth2.googleapis.com/token\",\"auth_provider_x509_cert_url\":\"https://www.googleapis.com/oauth2/v1/certs\",\"client_x509_cert_url\":\"https://www.googleapis.com/robot/v1/metadata/x509/calendar-account%40home-assistant-276520.iam.gserviceaccount.com\"}",
 						"type": "text"
 					}
 				],
@@ -133,25 +136,208 @@
 					}
 				},
 				"url": {
-					"raw": "https://www.googleapis.com/calendar/v3/calendars/7p6iutdbluv6bqbssbulkv0hug%40group.calendar.google.com/events?key=AIzaSyDoLPGkqwhBEAyceyIS5XPVahFm4Gq81-A",
-					"protocol": "https",
+					"raw": "http://127.0.0.1:5001/api/calendar?start=2020-06-02T21:30:00%2b03:00&end=2020-06-20T23:30:00%2b03:00",
+					"protocol": "http",
 					"host": [
-						"www",
-						"googleapis",
-						"com"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
+					"port": "5001",
 					"path": [
-						"calendar",
-						"v3",
-						"calendars",
-						"7p6iutdbluv6bqbssbulkv0hug%40group.calendar.google.com",
-						"events"
+						"api",
+						"calendar"
 					],
 					"query": [
 						{
-							"key": "key",
-							"value": "AIzaSyDoLPGkqwhBEAyceyIS5XPVahFm4Gq81-A"
+							"key": "start",
+							"value": "2020-06-02T21:30:00%2b03:00"
+						},
+						{
+							"key": "end",
+							"value": "2020-06-20T23:30:00%2b03:00"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Insert event",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"summay\": \"Postman test\", \r\n    \"start\": \"2020-06-13T11:30:00+03:00\",\r\n    \"end\": \"2020-06-13T12:45:00+03:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/api/calendar/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"calendar",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change event",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"summary\": \"Changed\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/api/calendar/update/?id=afqgqn1jh64s5apjphnder33pk",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"calendar",
+						"update",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "afqgqn1jh64s5apjphnder33pk"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Weather forecast call.",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/api/weather",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"weather"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sending intent to dialogue manager",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "     {\r\n        \"text\": \"aș vrea să îmi pui prânz cu Maria pentru joi între 12 și unu.\",\r\n        \"intent\": \"calendarAdd\",\r\n        \"entities\": [\r\n          {\r\n            \"end\": 33,\r\n            \"entity\": \"event\",\r\n            \"start\": 19,\r\n            \"value\": \"prânz cu Maria\"\r\n          },\r\n          {\r\n            \"end\": 44,\r\n            \"entity\": \"data\",\r\n            \"start\": 41,\r\n            \"value\": \"joi\"\r\n          },\r\n          {\r\n            \"end\": 53,\r\n            \"entity\": \"ora_inceput\",\r\n            \"start\": 51,\r\n            \"value\": \"12\"\r\n          }\r\n        ]\r\n      }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/intent",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"intent"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send update intent",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "      {\r\n        \"text\": \"prefer să fie la unu\",\r\n        \"intent\": \"calendarUpdate\",\r\n        \"entities\": [\r\n          {\r\n            \"end\": 20,\r\n            \"entity\": \"ora\",\r\n            \"start\": 17,\r\n            \"value\": \"unu\"\r\n          }\r\n        ]\r\n      },",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/intent",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"intent"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Intent positive answer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Da\",\r\n    \"intent\": \"answer\",\r\n    \"entities\": [\r\n        {\r\n        \"end\": 2,\r\n        \"entity\": \"positive\",\r\n        \"start\": 0,\r\n        \"value\": \"Da\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/intent",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"intent"
 					]
 				}
 			},

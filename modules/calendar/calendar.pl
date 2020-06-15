@@ -44,6 +44,14 @@ get_date(Date) :-
   get_time(T),
   stamp_date_time(T, Date, local).
 
+printEvents([]).
+printEvents([Event | T]) :-
+  Start = Event.get('start').get('dateTime'),
+  End   = Event.get('end').get('dateTime'),
+  Title = Event.get('summary'),
+  format('Evenimentul se nume\u0219te ~s. \u00eentre ~s ~s~n', [Title, Start, End]),
+  printEvents(T).
+
 % The calendar api uses rfc-3339 for formatting timestamps.
 rfc339Timestamp(Date, Timestamp) :-
   date_time_value(year,       Date, Year),
@@ -66,6 +74,21 @@ rfc339Timestamp(Date, Timestamp) :-
 
   format(string(Timestamp), '~d-~s-~sT~s:~s:~s~s', [Year, M, D, H, Min, S, O]).
 
+rfc339Timestamp(datetime(Year, Month, Day, Hour, Minute, Second), Timestamp) :-
+  Offset is -10800,
+  Second_ is floor(Second),
+  Offset_ is Offset * -1,
+  utcOffsetToString(Offset_, O),
+
+  twoDigits(Month,   M),
+  twoDigits(Day,     D),
+  twoDigits(Hour,    H),
+  twoDigits(Minute,  Min),
+  twoDigits(Second_, S),
+
+  format(string(Timestamp), '~d-~s-~sT~s:~s:~s~s', [Year, M, D, H, Min, S, O]).
+
+
 listEventsURL(TimeMin, TimeMax, Url) :-
   calendarApiUrl(ApiUrl),
   format(string(Decoded), '~s?start=~s&end=~s', [ApiUrl, TimeMin, TimeMax]),
@@ -86,8 +109,9 @@ listEventsCall(TimeMin, TimeMax, R) :-
       json_read_dict(In, EventsData),
       close(In)
   ),
-  L = EventsData.get('items'),
-  maplist(jsonToList, L, R).
+  R = EventsData.get('items'),
+  printEvents(R).
+  % maplist(jsonToList, L, R).
 
 insertEventCall(Title, Location, Start, End, R) :-
   Body = json([
