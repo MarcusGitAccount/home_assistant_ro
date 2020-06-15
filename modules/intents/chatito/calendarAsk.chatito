@@ -60,13 +60,13 @@
     peste trei zile
     peste o săptămână
     <zi calendar>
-    deseară
 
 @[ora_inceput_relativ]
     după-masă
     dimineață
     după prânz
     după amiaza
+    deseară
 
 @[ora_inceput]
     12
