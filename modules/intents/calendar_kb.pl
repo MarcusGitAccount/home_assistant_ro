@@ -5,26 +5,20 @@ relative(calendarAdd, Y, Val, R, Mesaj) :- relative(calendarAsk, Y, Val, R, Mesa
 relative(calendarAsk, event, V, V, V).
 
 relative(calendarAsk, data, 'azi', R, Mesaj) :-
-    date_get(today, date(Y, M, D)),
-    % Make sure to zero pad month and day to 2 digits
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    date_get(today, Today),
+    R = [Today],
     Mesaj = 'azi'.
 
 relative(calendarAsk, data, 'maine', R, Mesaj) :-
-    date_get(tomorrow, date(Y, M, D)),
-    % Make sure to zero pad month and day to 2 digits
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    date_get(tomorrow, Tomorrow),
+    R = [Tomorrow],
     Mesaj = 'm\u00e2ine'.
 
 relative(calendarAsk, data, 'poimaine', R, Mesaj) :-
     date_get(today, Today),
     % Add 2 days to today's date
-    date_add(Today, days(2), date(Y, M, D)),
-    % Make sure to zero pad month and day to 2 digits
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    date_add(Today, days(2), DayAfterTomorrow),
+    R = [DayAfterTomorrow],
     Mesaj = 'poim\u00e2ine'.
 
 relative(calendarAsk, data, 'peste doua zile', R, Mesaj) :- relative(calendarAsk, data, 'poimaine', R, Mesaj).
@@ -32,17 +26,13 @@ relative(calendarAsk, data, 'peste doua zile', R, Mesaj) :- relative(calendarAsk
 relative(calendarAsk, data, 'peste trei zile', R, Mesaj) :-
     date_get(today, Today),
     % Add 3 days to today's date
-    date_add(Today, days(3), date(Y, M, D)),
-    % Make sure to zero pad month and day to 2 digits
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    date_add(Today, days(3), ThreeDaysAfter),
+    R = [ThreeDaysAfter],
     Mesaj = 'peste trei zile'.
 
 relative(calendarAsk, data, 'peste o saptamana', R, Mesaj) :-
-    date_get(next_week, date(Y, M, D)),
-    % Make sure to zero pad month and day to 2 digits
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    date_get(next_week, OneWeekLater),
+    R = [OneWeekLater],
     Mesaj = 'peste o s\u0103pt\u0103m\u00e2n\u0103'.
 
 relative(calendarAsk, data, 'saptamana viitoare', R, Mesaj) :- relative(calendarAsk, data, 'peste o saptamana', R, Mesaj).
@@ -50,58 +40,47 @@ relative(calendarAsk, data, 'saptamana viitoare', R, Mesaj) :- relative(calendar
 
 
 relative(calendarAsk, data, 'in weekend', R, Mesaj) :-
-    weekday_date('Friday', date(Y1, M1, D1)),
+    weekday_date('Friday', Friday),
     % Add 3 days to next Friday's date
-    date_add(date(Y1, M1, D1), days(3), date(Y2, M2, D2)),
-    % Next Friday's date as string
-    format(string(S1), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y1, M1, D1]),
-    % Next Sunday's date as string
-    format(string(S2), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y2, M2, D2]),
-    R = [S1, S2],
+    date_add(Friday, days(3), Sunday),
+    R = [Friday, Sunday],
     Mesaj = '\u00een weekend'.
 
 
 
 relative(calendarAsk, data, 'luni', R, Mesaj) :-
-    weekday_date('Monday', date(Y, M, D)),
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    weekday_date('Monday', Monday),
+    R = [Monday],
     Mesaj = 'luni'.
 
 relative(calendarAsk, data, 'marti', R, Mesaj) :-
-    weekday_date('Tuesday', date(Y, M, D)),
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    weekday_date('Tuesday', Tuesday),
+    R = [Tuesday],
     Mesaj = 'mar\u021bi'.
 
 relative(calendarAsk, data, 'miercuri', R, Mesaj) :-
-    weekday_date('Wednesday', date(Y, M, D)),
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    weekday_date('Wednesday', Wednesday),
+    R = [Wednesday],
     Mesaj = 'miercuri'.
 
 relative(calendarAsk, data, 'joi', R, Mesaj) :-
-    weekday_date('Thursday', date(Y, M, D)),
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    weekday_date('Thursday', Thursday),
+    R = [Thursday],
     Mesaj = 'joi'.
 
 relative(calendarAsk, data, 'vineri', R, Mesaj) :-
-    weekday_date('Friday', date(Y, M, D)),
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    weekday_date('Friday', Friday),
+    R = [Friday],
     Mesaj = 'vineri'.
 
 relative(calendarAsk, data, 'sambata', R, Mesaj) :-
-    weekday_date('Saturday', date(Y, M, D)),
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    weekday_date('Saturday', Saturday),
+    R = [Saturday],
     Mesaj = 's\u00e2mb\u0103t\u0103'.
 
 relative(calendarAsk, data, 'duminica', R, Mesaj) :-
-    weekday_date('Sunday', date(Y, M, D)),
-    format(string(S), '~d-~|~`0t~d~2+-~|~`0t~d~2+', [Y, M, D]),
-    R = [S],
+    weekday_date('Sunday', Sunday),
+    R = [Sunday],
     Mesaj = 'duminic\u0103'.
 
 
