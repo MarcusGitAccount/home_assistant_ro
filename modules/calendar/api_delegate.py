@@ -141,13 +141,43 @@ def calendar_api_update():
 @app.route('/api/weather', methods=['GET'])
 def weather_api():
   if request.method == 'GET':
-    lat = request.args.get('lat', type=float, default=46.770439)
-    lon = request.args.get('lon', type=float, default=23.591423)
+    lat_lon = request.args.get('lat_lon', type=str, default=[46.770439, 23.591423])
+    time = request.args.get('time', type=str)
+
+    # Transform list represented as a string into real list
+    lat_lon = lat_lon[1:-1:].split(',')
+    time = time[1:-1:].split(',')  
+    lat = float(lat_lon[0])
+    lon = float(lat_lon[1])
+
     data = get_weather(lat, lon)
-    return json.dumps(data, indent=2, ensure_ascii=False)
+    response = {}
+
+    if time[0] == 'daily':
+      offset = int(time[1])
+      time_of_day = time[2]
+      data = data['daily'][offset]
+      response['temp'] = data['temp'][time_of_day]
+      response['feels_like'] = data['feels_like'][time_of_day]
+      response['humidity'] = data['humidity']
+      response['description'] = data['weather'][0]['description']
+    else:
+      if time[0] == 'current':
+        data = data['current']
+      elif time[0] == 'hourly':
+        offset = int(time[1])
+        data = data['hourly'][offset]
+
+      response['temp'] = data['temp']
+      response['feels_like'] = data['feels_like']
+      response['humidity'] = data['humidity']
+      response['description'] = data['weather'][0]['description']
+
+    return json.dumps(response, indent=2, ensure_ascii=False)
 
 def get_weather(lat, lon):
   cache = {}
+  
   key = str((lat, lon))
   with open(WEATHER_CACHE, 'rb') as fd:
     content = fd.read()
@@ -169,7 +199,8 @@ def get_weather(lat, lon):
           if minutes > 60:
             print('Cached data too old')
           else:
-            return cache[key]
+            d = cache[key]
+            return d[list(d.keys())[0]]
 
   print('Issuing request to weather api.')
   url = f'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=minutely&appid={WEATHER_KEY}&lang=ro&units=metric'
@@ -185,7 +216,7 @@ def get_weather(lat, lon):
     print('Writing response to cache')
     to_write = json.dumps(cache, ensure_ascii=False).encode('utf-8')
     fd.write(to_write)
-
+    
   return data
 
 def main():
