@@ -418,7 +418,6 @@ intentEndpointHandler(Request) :-
   % portray_clause(Request),
   intentReceived().
 
-
 % Perform states requiring intent as input.
 intentReceived() :- intent(X), not(validIntent(X)), log('Invalid intent'), switchState(idle).
 intentReceived() :- performState(idle), !.
@@ -427,7 +426,7 @@ intentReceived() :- performState(waitForUpdate), !.
 % If no state can be performed, switch to idle.
 intentReceived() :- switchState(idle), !.
 
-log(Message) :- format(string(Str), '~s~n', Message), write(Str).
+log(Message) :- format(string(Str), 'Log: ~s~n', Message), write(Str).
 
 setState(NewState) :-
   currentState(S),
@@ -441,7 +440,7 @@ switchState(NewState) :- setState(NewState), performState(NewState), !.
 switchState(waitForAnswer) :- setState(waitForAnswer), !.
 switchState(waitForUpdate) :- setState(waitForUpdate).
 
-% Call to text to speech api
+% Call to the text to speech api
 talkBack(Message) :- log(Message).
 
 positiveAnswer() :- entity(answer, positive, _).
