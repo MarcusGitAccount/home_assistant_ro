@@ -89,11 +89,42 @@ getWeatherCall(LatLon, Time, R) :-
 - states switch
 - intent observer -->
 
-The finite state machine is written using Prolog and is running under a server that handles http requests which pass JSON data containing intents and their entities. Predicates such as `currentState/1`, `performState/1`, and `switchState/1` are used to design the execution of the FSM.
+The finite state machine is written using Prolog and is running under a server that handles http requests which pass JSON data containing intents and their entities. Predicates such as `currentState/1`, `performState/1`, `switchState/1` and `intentReceived/0` are used to design the execution of the FSM.
 
 * `currentState` simply asserts which state the automata is in at a given moment.
 * `performState` has a separate definition for each state and contains various actions that have to be executed during that particular state. It also switches the current state the FSM is in.
 * `switchState` is used to switch between states and simultaneously log messages to the console and perform clean-up actions.
+* `intentReceived` is used to switch states according to the new intent received. Together with `intentEndpointHandler/1` (which implements the _server endpoint_ for receiving requests) they form the backbone of our _observer pattern_ implementation:
+
+```Prolog
+intentEndpointHandler(Request) :-
+  % Read and handle JSON input
+  http_read_json(Request, Dict, [json_object(dict)]),
+
+  atom_string(Intent, Dict.get('intent')),
+  Entities = Dict.get('entities'),
+
+  % Remove old intent
+  retractall(intent(_)),
+  retractall(entity(answer, _, _)),
+  retractall(entity(calendarUpdate, _, _)),
+
+  % Setup new intent and persist entities in kb
+  New =..[intent, Intent],
+  assertz(New),
+  persistEntities(Entities),
+
+  reply_json(json([message = 'Received intent'])), nl,
+  intentReceived().
+
+% Perform states requiring intent as input.
+intentReceived() :- intent(X), not(validIntent(X)), log('Invalid intent'), switchState(idle).
+intentReceived() :- performState(idle), !.
+intentReceived() :- performState(waitForAnswer), !.
+intentReceived() :- performState(waitForUpdate), !.
+% If no state can be performed, switch to idle.
+intentReceived() :- switchState(idle), !.
+```
 
 For example, the actions for a _weather call_ state would look like this:
 ```Prolog
@@ -114,6 +145,37 @@ performState(weatherApiCall) :-
     % Switch to the next state
     switchState(respond).
 ```
+We also make great use of helper predicates. The following one checks whether the start and times in the knowledge base are in correct order:
+
+```Prolog
+startEndTimeForAddAreCorrect() :-
+  % Get start and end time
+  finalEntity(calendarAdd, ora_inceput, StartL, _),
+  finalEntity(calendarAdd, ora_final, EndL, _),
+
+  % Get the actual values from lists
+  nth0(0, StartL, Start),
+  nth0(0, EndL, End),
+
+  % Set message if start and end are not in order
+  not(time_compare(Start, <, End)),
+  Message =..[message, 'Orele de \u00eenceput \u0219i de final nu sunt date corect. Care dore\u0219ti s\u0103 fie ora de \u00eenceput a evenimentului?'],                
+  assertz(Message),
+
+  % Set start/end time entities as missing
+  M1 =..[missingEntity, calendarAdd, ora_inceput], assertz(M1),
+  M2 =..[missingEntity, calendarAdd, ora_final], assertz(M2),
+
+  Modified =..[toBeModified, calendarAdd, ora_inceput],  
+  assertz(Modified),
+
+  % Remove start/end hour so that the state will be reached once again
+  retractall(finalEntity(calendarAdd, ora_inceput, _, _)),
+  retractall(finalEntity(calendarAdd, ora_final, _, _)).
+```
+
+Other helper predicates: `persistEntities/0`, `hasMissingEntity/0`.
+
 
 ## Service module
 

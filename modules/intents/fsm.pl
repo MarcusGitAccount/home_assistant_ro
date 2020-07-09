@@ -332,17 +332,20 @@ hasMissingEntity() :-
   Modified =..[toBeModified, calendarAdd, ora_final], assertz(Modified).
 
 startEndTimeForAddAreCorrect() :-
+  % Get start and end time
   finalEntity(calendarAdd, ora_inceput, StartL, _),
   finalEntity(calendarAdd, ora_final, EndL, _),
 
+  % Get the actual values from lists
   nth0(0, StartL, Start),
   nth0(0, EndL, End),
 
+  % Set message if start and end are not in order
   not(time_compare(Start, <, End)),
-  % Set message
   Message =..[message, 'Orele de \u00eenceput \u0219i de final nu sunt date corect. Care dore\u0219ti s\u0103 fie ora de \u00eenceput a evenimentului?'],                
   assertz(Message),
 
+  % Set start/end time entities as missing
   M1 =..[missingEntity, calendarAdd, ora_inceput], assertz(M1),
   M2 =..[missingEntity, calendarAdd, ora_final], assertz(M2),
 
@@ -387,12 +390,14 @@ doAnswer() :-
   assertz(entity(answer, positive, 'Da')),
   intentReceived().
 
+% For manual testing only.
 doAsk() :-
   assertz(intent(calendarAsk)),
   assertz(entity(calendarAsk, data, 'joi')),
   assertz(entity(calendarAsk, ora_inceput_relativ, 'dupa amiaza')),
   intentReceived().
 
+% For manual testing only.
 doWeather() :-
   assertz(intent(queryWeather)),
   assertz(entity(queryWeather, timp, 'peste doua ore')),
@@ -400,6 +405,7 @@ doWeather() :-
   intentReceived().
 
 intentEndpointHandler(Request) :-
+  % Read and handle JSON input
   http_read_json(Request, Dict, [json_object(dict)]),
 
   atom_string(Intent, Dict.get('intent')),
@@ -410,12 +416,12 @@ intentEndpointHandler(Request) :-
   retractall(entity(answer, _, _)),
   retractall(entity(calendarUpdate, _, _)),
 
+  % Setup new intent and persist entities in kb
   New =..[intent, Intent],
   assertz(New),
   persistEntities(Entities),
 
   reply_json(json([message = 'Received intent'])), nl,
-  % portray_clause(Request),
   intentReceived().
 
 % Perform states requiring intent as input.
