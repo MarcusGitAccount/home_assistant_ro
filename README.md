@@ -16,7 +16,7 @@ The dialogue manager is a component inside the project which is responsible for 
 
 The above diagram illustrates the system's structure and how it is divided in several interacting modules, each of which is going to be detailed in the following sub-sections of this document.
 
-The dialogue manager is essentially based on two intercommunicating servers, one written in Prolog, which employs a finite state machine logic in order to handle user communication and requests, and the other written in Python, which handles actuall API calls and authentications.
+The dialogue manager is essentially based on two intercommunicating servers, one written in Prolog, which employs a finite state machine logic in order to handle user communication and requests, and the other written in Python, which handles actual API calls and authentications.
 
 ## Knowledge base representation
 
