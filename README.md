@@ -177,7 +177,7 @@ if request.method == 'GET':
 - text to speech
 - speech to text -->
 
-Other modules include the speech-to-text (STT) module, which is written using the [RASA NLU framework](https://rasa.com/docs/rasa/nlu/about/). The training datasets containing sentences used for learning are generated using [Chatito](https://rodrigopivi.github.io/Chatito/). Example content of one of the .chatito files:
+Other modules include the speech-to-text module, which is developed using the [RASA NLU framework](https://rasa.com/docs/rasa/nlu/about/). The training datasets containing sentences used for learning are generated using [Chatito](https://rodrigopivi.github.io/Chatito/). Example content of one of the .chatito files:
 ```C#
 %[answer]('training': '90', 'testing': '30')
     @[positive]
