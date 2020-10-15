@@ -5,6 +5,10 @@ This project focuses on the implementation of a dialogue manager module inside a
 * playing music
 * turning the lights on/off
 
+# Presentation
+
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/dLzlVVpMKW8/0.jpg)](http://www.youtube.com/watch?v=dLzlVVpMKW8 "Home Assistant Add Lunch Scenario")
+
 The dialogue manager is a component inside the project which is responsible for the interpretation of given commands and their parameters, deciding whether they are correctly specified or not, retrieving information from APIs (weather, calendar, etc.), and issuing a meaningful response based on given input.
 # Modules
 
